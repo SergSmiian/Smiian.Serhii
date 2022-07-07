@@ -43,7 +43,7 @@ public class BusRepository implements CrudRepository<Bus>{
     public boolean update(Bus bus) {
         final Bus founded = getById(bus.getId());
         if (founded != null) {
-            BusRepository.BusCopy.copy(bus, founded);
+            BusCopy.copy(bus, founded);
             return true;
         }
         return false;

@@ -31,12 +31,12 @@ public class BusService {
         return result;
     }
     public void updateBus(Bus bus){
-        LOGGER.info("updated bus: "+bus.getId());
+        LOGGER.info("updated bus: {}", bus.getId());
         BUS_REPOSITORY.update(bus);
     }
 
     public void deleteBus(Bus bus){
-        LOGGER.info("deleted bus: "+bus.getId());
+        LOGGER.info("deleted bus: {}", bus.getId());
         BUS_REPOSITORY.delete(bus.getId());
     }
     private Manufacturer getRandomManufacturer() {
@@ -46,7 +46,7 @@ public class BusService {
     }
 
     public void saveBuses(List<Bus> buses) {
-        LOGGER.info("create " + buses.size() + " buses");
+        LOGGER.info("create {} buses", buses.size());
         BUS_REPOSITORY.create(buses);
     }
 

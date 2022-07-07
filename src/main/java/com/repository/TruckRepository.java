@@ -43,7 +43,7 @@ public class TruckRepository implements CrudRepository<Truck> {
     public boolean update(Truck truck) {
         final Truck founded = getById(truck.getId());
         if (founded != null) {
-            TruckRepository.TruckCopy.copy(truck, founded);
+            TruckCopy.copy(truck, founded);
             return true;
         }
         return false;
@@ -66,7 +66,7 @@ public class TruckRepository implements CrudRepository<Truck> {
         static void copy(final Truck from, final Truck to) {
             to.setManufacturer(from.getManufacturer());
             to.setModel(from.getModel());
-            to.setCarryingСapacity(from.getCarryingСapacity());
+            to.setCarryingCapacity(from.getCarryingCapacity());
             to.setPrice(from.getPrice());
         }
     }

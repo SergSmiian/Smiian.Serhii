@@ -33,12 +33,12 @@ public class AutoService {
     }
 
     public void updateAuto(Auto auto){
-        LOGGER.info("updated auto: "+auto.getId());
+        LOGGER.info("updated auto {}", auto.getId());
         AUTO_REPOSITORY.update(auto);
     }
 
     public void deleteAuto(Auto auto){
-        LOGGER.info("deleted auto: "+auto.getId());
+        LOGGER.info("deleted auto: {}", auto.getId());
         AUTO_REPOSITORY.delete(auto.getId());
     }
 
@@ -49,7 +49,7 @@ public class AutoService {
     }
 
     public void saveAutos(List<Auto> autos) {
-        LOGGER.info("create " + autos.size() + " autos");
+        LOGGER.info("create {} autos", autos.size());
         AUTO_REPOSITORY.create(autos);
     }
 

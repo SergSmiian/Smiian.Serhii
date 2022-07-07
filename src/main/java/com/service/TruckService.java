@@ -31,12 +31,12 @@ public class TruckService {
         return result;
     }
     public void updateTruck(Truck truck){
-        LOGGER.info("updated truck: "+truck.getId());
+        LOGGER.info("updated truck: {}", truck.getId());
         TRUCK_REPOSITORY.update(truck);
     }
 
     public void deleteTruck(Truck truck){
-        LOGGER.info("deleted truck: "+truck.getId());
+        LOGGER.info("deleted truck: {}", truck.getId());
         TRUCK_REPOSITORY.delete(truck.getId());
     }
     private Manufacturer getRandomManufacturer() {
@@ -46,7 +46,7 @@ public class TruckService {
     }
 
     public void saveTruck(List<Truck> trucks) {
-        LOGGER.info("create " + trucks.size() + " trucks");
+        LOGGER.info("create {} trucks", trucks.size());
         TRUCK_REPOSITORY.create(trucks);
     }
 
