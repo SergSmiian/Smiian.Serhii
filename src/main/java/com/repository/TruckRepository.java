@@ -29,13 +29,13 @@ public class TruckRepository implements CrudRepository<Truck> {
     }
 
     @Override
-    public boolean create(Truck truck) {
+    public boolean save(Truck truck) {
         trucks.add(truck);
         return true;
     }
 
     @Override
-    public boolean create(List<Truck> truck) {
+    public boolean saveAll(List<Truck> truck) {
         return trucks.addAll(truck);
     }
 
@@ -69,5 +69,14 @@ public class TruckRepository implements CrudRepository<Truck> {
             to.setCarryingCapacity(from.getCarryingCapacity());
             to.setPrice(from.getPrice());
         }
+    }
+
+    public boolean updateByCarryingCapacity(double carryingCapacity, Truck copyFrom) {
+        for (Truck truck : trucks) {
+            if (truck.getCarryingCapacity() == carryingCapacity) {
+                TruckRepository.TruckCopy.copy(copyFrom, truck);
+            }
+        }
+        return true;
     }
 }

@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BusRepository implements CrudRepository<Bus>{
+public class BusRepository implements CrudRepository<Bus> {
     private final List<Bus> buses;
 
     public BusRepository() {
@@ -29,13 +29,13 @@ public class BusRepository implements CrudRepository<Bus>{
     }
 
     @Override
-    public boolean create(Bus bus) {
+    public boolean save(Bus bus) {
         buses.add(bus);
         return true;
     }
 
     @Override
-    public boolean create(List<Bus> bus) {
+    public boolean saveAll(List<Bus> bus) {
         return buses.addAll(bus);
     }
 
@@ -70,4 +70,14 @@ public class BusRepository implements CrudRepository<Bus>{
             to.setPrice(from.getPrice());
         }
     }
+
+    public boolean updateByPassengers(int passengers, Bus copyFrom) {
+        for (Bus bus : buses) {
+            if (bus.getPassengers() == passengers) {
+                BusRepository.BusCopy.copy(copyFrom, bus);
+            }
+        }
+        return true;
+    }
+
 }

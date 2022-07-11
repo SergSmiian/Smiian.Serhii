@@ -14,9 +14,12 @@ import java.util.Random;
 public class BusService {
     private static final Logger LOGGER = LoggerFactory.getLogger(BusService.class);
     private static final Random RANDOM = new Random();
-    private static final BusRepository BUS_REPOSITORY = new BusRepository();
+    private final BusRepository busRepository;
+    public BusService(BusRepository busRepository) {
+        this.busRepository = busRepository;
+    }
 
-    public List<Bus> createBuses(int count) {
+    public List<Bus> createAndSaveBuses(int count) {
         List<Bus> result = new LinkedList<>();
         for (int i = 0; i < count; i++) {
             final Bus bus = new Bus(
@@ -26,18 +29,22 @@ public class BusService {
                     RANDOM.nextInt(350)
             );
             result.add(bus);
+            busRepository.save(bus);
             LOGGER.debug("Created bus {}", bus.getId());
         }
         return result;
     }
     public void updateBus(Bus bus){
         LOGGER.info("updated bus: {}", bus.getId());
-        BUS_REPOSITORY.update(bus);
+        busRepository.update(bus);
     }
 
     public void deleteBus(Bus bus){
+        if(bus == null){
+            throw new IllegalArgumentException("bus = NULL");
+        }
         LOGGER.info("deleted bus: {}", bus.getId());
-        BUS_REPOSITORY.delete(bus.getId());
+        busRepository.delete(bus.getId());
     }
     private Manufacturer getRandomManufacturer() {
         final Manufacturer[] values = Manufacturer.values();
@@ -47,13 +54,25 @@ public class BusService {
 
     public void saveBuses(List<Bus> buses) {
         LOGGER.info("create {} buses", buses.size());
-        BUS_REPOSITORY.create(buses);
+        busRepository.saveAll(buses);
     }
 
     public void printAll() {
-        for (Bus bus : BUS_REPOSITORY.getAll()) {
+        List<Bus> buses = busRepository.getAll();
+        if (buses == null) {
+            System.out.println("empty");
+            return;
+        }
+        for (Bus bus : buses) {
             System.out.println(bus);
         }
         System.out.println("- - - -");
+    }
+    public Bus findOneById(String id) {
+        if (id == null) {
+            return busRepository.getById("");
+        } else {
+            return busRepository.getById(id);
+        }
     }
 }

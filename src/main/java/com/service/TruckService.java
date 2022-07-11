@@ -14,9 +14,13 @@ import java.util.Random;
 public class TruckService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TruckService.class);
     private static final Random RANDOM = new Random();
-    private static final TruckRepository TRUCK_REPOSITORY = new TruckRepository();
+    private final TruckRepository truckRepository;
 
-    public List<Truck> createTrucks(int count) {
+    public TruckService(TruckRepository truckRepository) {
+        this.truckRepository = truckRepository;
+    }
+
+    public List<Truck> createAndSaveTrucks(int count) {
         List<Truck> result = new LinkedList<>();
         for (int i = 0; i < count; i++) {
             final Truck truck = new Truck(
@@ -26,19 +30,22 @@ public class TruckService {
                     RANDOM.nextDouble(1000)
             );
             result.add(truck);
+            truckRepository.save(truck);
             LOGGER.debug("Created truck {}", truck.getId());
         }
         return result;
     }
-    public void updateTruck(Truck truck){
+
+    public void updateTruck(Truck truck) {
         LOGGER.info("updated truck: {}", truck.getId());
-        TRUCK_REPOSITORY.update(truck);
+        truckRepository.update(truck);
     }
 
-    public void deleteTruck(Truck truck){
+    public void deleteTruck(Truck truck) {
         LOGGER.info("deleted truck: {}", truck.getId());
-        TRUCK_REPOSITORY.delete(truck.getId());
+        truckRepository.delete(truck.getId());
     }
+
     private Manufacturer getRandomManufacturer() {
         final Manufacturer[] values = Manufacturer.values();
         final int index = RANDOM.nextInt(values.length);
@@ -47,13 +54,21 @@ public class TruckService {
 
     public void saveTruck(List<Truck> trucks) {
         LOGGER.info("create {} trucks", trucks.size());
-        TRUCK_REPOSITORY.create(trucks);
+        truckRepository.saveAll(trucks);
     }
 
     public void printAll() {
-        for (Truck truck : TRUCK_REPOSITORY.getAll()) {
+        for (Truck truck : truckRepository.getAll()) {
             System.out.println(truck);
         }
         System.out.println("- - - -");
+    }
+
+    public Truck findOneById(String id) {
+        if (id == null) {
+            return truckRepository.getById("");
+        } else {
+            return truckRepository.getById(id);
+        }
     }
 }
