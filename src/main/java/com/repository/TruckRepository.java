@@ -1,26 +1,28 @@
 package com.repository;
 
 import com.model.Truck;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
 
 public class TruckRepository implements CrudRepository<Truck> {
     private final List<Truck> trucks;
+    private static final Logger LOGGER = LoggerFactory.getLogger(TruckRepository.class);
 
     public TruckRepository() {
         trucks = new LinkedList<>();
     }
 
     @Override
-    public Truck getById(String id) {
+    public Optional<Truck> findById(String id) {
         for (Truck truck : trucks) {
             if (truck.getId().equals(id)) {
-                return truck;
+                return Optional.of(truck);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
@@ -30,20 +32,30 @@ public class TruckRepository implements CrudRepository<Truck> {
 
     @Override
     public boolean save(Truck truck) {
-        trucks.add(truck);
-        return true;
+        Optional<Truck> value = Optional.ofNullable(truck);
+        value.ifPresentOrElse(trucks::add, () -> LOGGER.info("Attempt to save unexisting truck"));
+
+        return value.isPresent();
     }
 
     @Override
-    public boolean saveAll(List<Truck> truck) {
-        return trucks.addAll(truck);
+    public boolean saveAll(List<Truck> trucksToSave) {
+        final Optional<List<Truck>> value = Optional.ofNullable(trucksToSave);
+        value.ifPresent(trucks::addAll);
+        if (value.isPresent()) {
+            return !trucksToSave.isEmpty();
+        }
+        return false;
     }
 
     @Override
     public boolean update(Truck truck) {
-        final Truck founded = getById(truck.getId());
-        if (founded != null) {
-            TruckCopy.copy(truck, founded);
+        Optional.ofNullable(truck).orElseThrow(() ->
+                new IllegalArgumentException("truck = NULL"));
+
+        final Optional<Truck> optionalTruck = findById(truck.getId());
+        if (optionalTruck.isPresent()) {
+            optionalTruck.ifPresent(founded -> TruckRepository.TruckCopy.copy(truck, founded));
             return true;
         }
         return false;
@@ -70,12 +82,12 @@ public class TruckRepository implements CrudRepository<Truck> {
             to.setPrice(from.getPrice());
         }
     }
-
-    public boolean updateByCarryingCapacity(double carryingCapacity, Truck copyFrom) {
+    public boolean updateByCarryingCapacity (double carryingCapacity, Truck copyFrom){
         for (Truck truck : trucks) {
-            if (truck.getCarryingCapacity() == carryingCapacity) {
-                TruckRepository.TruckCopy.copy(copyFrom, truck);
-            }
+            Optional <Truck> truckOptional = Optional.of(truck);
+            truckOptional.map(Truck::getCarryingCapacity)
+                    .filter(capacity -> capacity == carryingCapacity)
+                    .ifPresent(capacity->TruckRepository.TruckCopy.copy(copyFrom, truck));
         }
         return true;
     }

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 class BusRepositoryTest {
     private BusRepository target;
@@ -27,26 +28,26 @@ class BusRepositoryTest {
     }
 
     @Test
-    void getById_findOne() {
-        final Bus actual = target.getById(bus.getId());
+    void findById_findOne() {
+        final Optional<Bus> actual = target.findById(bus.getId());
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(bus.getId(), actual.getId());
+        Assertions.assertEquals(bus.getId(), actual.get().getId());
     }
 
     @Test
-    void getById_notFind() {
-        final Bus actual = target.getById("1232");
-        Assertions.assertNull(actual);
+    void findById_notFind() {
+        final Optional<Bus> actual = target.findById("1232");
+        Assertions.assertTrue(actual.isEmpty());
     }
 
     @Test
-    void getById_findOne_manyBuses() {
+    void findById_findOne_manyBuses() {
         final Bus otherBus = createSimpleBus();
         target.save(otherBus);
-        final Bus actual = target.getById(bus.getId());
+        final Optional<Bus> actual = target.findById(bus.getId());
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(bus.getId(), actual.getId());
-        Assertions.assertNotEquals(otherBus.getId(), actual.getId());
+        Assertions.assertEquals(bus.getId(), actual.get().getId());
+        Assertions.assertNotEquals(otherBus.getId(), actual.get().getId());
     }
 
     @Test
@@ -61,8 +62,8 @@ class BusRepositoryTest {
         bus.setPrice(BigDecimal.ONE);
         final boolean actual = target.save(bus);
         Assertions.assertTrue(actual);
-        final Bus actualBus = target.getById(bus.getId());
-        Assertions.assertEquals(BigDecimal.ONE, actualBus.getPrice());
+        final Optional<Bus> actualBus = target.findById(bus.getId());
+        Assertions.assertEquals(BigDecimal.ONE, actualBus.get().getPrice());
     }
 
     @Test
@@ -73,8 +74,8 @@ class BusRepositoryTest {
     @Test
     void save_success_changePrice() {
         target.save(bus);
-        final Bus actual = target.getById(bus.getId());
-        Assertions.assertEquals(BigDecimal.valueOf(-1), actual.getPrice());
+        final Optional<Bus> actual = target.findById(bus.getId());
+        Assertions.assertEquals(BigDecimal.TEN, actual.get().getPrice());
     }
 
     @Test
@@ -107,8 +108,8 @@ class BusRepositoryTest {
         bus.setPrice(BigDecimal.TEN);
         final boolean actual = target.update(bus);
         Assertions.assertTrue(actual);
-        final Bus actualBus = target.getById(bus.getId());
-        Assertions.assertEquals(BigDecimal.TEN, actualBus.getPrice());
+        final Optional<Bus> actualBus = target.findById(bus.getId());
+        Assertions.assertEquals(BigDecimal.TEN, actualBus.get().getPrice());
     }
 
     @Test
@@ -119,8 +120,9 @@ class BusRepositoryTest {
 
         final boolean actual = target.updateByPassengers(bus.getPassengers(), otherBus);
         Assertions.assertTrue(actual);
-        final Bus actualBus = target.getById(bus.getId());
-        Assertions.assertEquals(Manufacturer.BMW, actualBus.getManufacturer());
-        Assertions.assertEquals(BigDecimal.TEN, actualBus.getPrice());
+        final Optional<Bus> actualBus = target.findById(bus.getId());
+        Assertions.assertEquals(Manufacturer.MERCEDES, actualBus.get().getManufacturer());
+        Assertions.assertEquals(BigDecimal.TEN, actualBus.get().getPrice());
     }
+
 }

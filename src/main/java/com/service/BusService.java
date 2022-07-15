@@ -7,9 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class BusService {
     private static final Logger LOGGER = LoggerFactory.getLogger(BusService.class);
@@ -68,11 +66,8 @@ public class BusService {
         }
         System.out.println("- - - -");
     }
-    public Bus findOneById(String id) {
-        if (id == null) {
-            return busRepository.getById("");
-        } else {
-            return busRepository.getById(id);
-        }
+    public Optional<Bus> findOneById(String id) {
+        id = Optional.ofNullable(id).orElse("");
+        return busRepository.findById(id);
     }
 }
