@@ -30,17 +30,26 @@ public class TruckRepository implements CrudRepository<Truck> {
 
     @Override
     public boolean save(Truck truck) {
+        if (truck == null){
+            throw new IllegalArgumentException("truck == null");
+        }
         trucks.add(truck);
         return true;
     }
 
     @Override
     public boolean saveAll(List<Truck> truck) {
+        if (truck == null){
+            return false;
+        }
         return trucks.addAll(truck);
     }
 
     @Override
     public boolean update(Truck truck) {
+        if (truck == null){
+            throw new IllegalArgumentException("truck == null");
+        }
         final Truck founded = getById(truck.getId());
         if (founded != null) {
             TruckCopy.copy(truck, founded);
@@ -72,6 +81,9 @@ public class TruckRepository implements CrudRepository<Truck> {
     }
 
     public boolean updateByCarryingCapacity(double carryingCapacity, Truck copyFrom) {
+        if (copyFrom == null){
+            throw new IllegalArgumentException("copyFrom == null");
+        }
         for (Truck truck : trucks) {
             if (truck.getCarryingCapacity() == carryingCapacity) {
                 TruckRepository.TruckCopy.copy(copyFrom, truck);

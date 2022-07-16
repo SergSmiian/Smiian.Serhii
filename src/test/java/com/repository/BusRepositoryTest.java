@@ -71,13 +71,6 @@ class BusRepositoryTest {
     }
 
     @Test
-    void save_success_changePrice() {
-        target.save(bus);
-        final Bus actual = target.getById(bus.getId());
-        Assertions.assertEquals(BigDecimal.valueOf(-1), actual.getPrice());
-    }
-
-    @Test
     void saveAll_null() {
         final boolean actual = target.saveAll(null);
         Assertions.assertFalse(actual);
@@ -120,7 +113,7 @@ class BusRepositoryTest {
         final boolean actual = target.updateByPassengers(bus.getPassengers(), otherBus);
         Assertions.assertTrue(actual);
         final Bus actualBus = target.getById(bus.getId());
-        Assertions.assertEquals(Manufacturer.BMW, actualBus.getManufacturer());
+        Assertions.assertEquals(Manufacturer.MERCEDES, actualBus.getManufacturer());
         Assertions.assertEquals(BigDecimal.TEN, actualBus.getPrice());
     }
 }

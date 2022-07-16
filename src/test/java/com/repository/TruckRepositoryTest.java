@@ -71,12 +71,6 @@ class TruckRepositoryTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> target.save(null));
     }
 
-    @Test
-    void save_success_changePrice() {
-        target.save(truck);
-        final Truck actual = target.getById(truck.getId());
-        Assertions.assertEquals(BigDecimal.valueOf(-1), actual.getPrice());
-    }
 
     @Test
     void saveAll_null() {
@@ -120,7 +114,7 @@ class TruckRepositoryTest {
         final boolean actual = target.updateByCarryingCapacity(truck.getCarryingCapacity(), otherTruck);
         Assertions.assertTrue(actual);
         final Truck actualTruck = target.getById(truck.getId());
-        Assertions.assertEquals(Manufacturer.RENAULT, actualTruck.getManufacturer());
+        Assertions.assertEquals(Manufacturer.KIA, actualTruck.getManufacturer());
         Assertions.assertEquals(BigDecimal.TEN, actualTruck.getPrice());
     }
 

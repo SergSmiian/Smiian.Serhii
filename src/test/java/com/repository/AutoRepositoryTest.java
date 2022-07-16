@@ -115,7 +115,7 @@ class AutoRepositoryTest {
     @Test
     void updateByBodyType() {
         final Auto otherAuto = createSimpleAuto();
-        otherAuto.setManufacturer(Manufacturer.KIA);
+        otherAuto.setManufacturer(Manufacturer.RENAULT);
         otherAuto.setPrice(BigDecimal.TEN);
 
         final boolean actual = target.updateByBodyType(auto.getBodyType(), otherAuto);
