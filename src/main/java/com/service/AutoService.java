@@ -15,9 +15,13 @@ public class AutoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoService.class);
     private static final Random RANDOM = new Random();
-    private static final AutoRepository AUTO_REPOSITORY = new AutoRepository();
+    private final AutoRepository autoRepository;
 
-    public List<Auto> createAutos(int count) {
+    public AutoService(AutoRepository autoRepository) {
+        this.autoRepository = autoRepository;
+    }
+
+    public List<Auto> createAndSaveAutos(int count) {
         List<Auto> result = new LinkedList<>();
         for (int i = 0; i < count; i++) {
             final Auto auto = new Auto(
@@ -27,19 +31,20 @@ public class AutoService {
                     "Model-" + RANDOM.nextInt(1000)
             );
             result.add(auto);
+            autoRepository.save(auto);
             LOGGER.debug("Created auto {}", auto.getId());
         }
         return result;
     }
 
-    public void updateAuto(Auto auto){
+    public void updateAuto(Auto auto) {
         LOGGER.info("updated auto {}", auto.getId());
-        AUTO_REPOSITORY.update(auto);
+        autoRepository.update(auto);
     }
 
-    public void deleteAuto(Auto auto){
+    public void deleteAuto(Auto auto) {
         LOGGER.info("deleted auto: {}", auto.getId());
-        AUTO_REPOSITORY.delete(auto.getId());
+        autoRepository.delete(auto.getId());
     }
 
     private Manufacturer getRandomManufacturer() {
@@ -50,14 +55,21 @@ public class AutoService {
 
     public void saveAutos(List<Auto> autos) {
         LOGGER.info("create {} autos", autos.size());
-        AUTO_REPOSITORY.create(autos);
+        autoRepository.saveAll(autos);
     }
 
-
     public void printAll() {
-        for (Auto auto : AUTO_REPOSITORY.getAll()) {
-            System.out.println(auto.toString());
+        for (Auto auto : autoRepository.getAll()) {
+            System.out.println(auto);
         }
         System.out.println("- - - -");
+    }
+
+    public Auto findOneById(String id) {
+        if (id == null) {
+            return autoRepository.getById("");
+        } else {
+            return autoRepository.getById(id);
+        }
     }
 }

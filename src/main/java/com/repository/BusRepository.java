@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BusRepository implements CrudRepository<Bus>{
+public class BusRepository implements CrudRepository<Bus> {
     private final List<Bus> buses;
 
     public BusRepository() {
@@ -29,18 +29,27 @@ public class BusRepository implements CrudRepository<Bus>{
     }
 
     @Override
-    public boolean create(Bus bus) {
+    public boolean save(Bus bus) {
+        if (bus == null){
+            throw new IllegalArgumentException("bus == null");
+        }
         buses.add(bus);
         return true;
     }
 
     @Override
-    public boolean create(List<Bus> bus) {
+    public boolean saveAll(List<Bus> bus) {
+        if (bus == null){
+            return false;
+        }
         return buses.addAll(bus);
     }
 
     @Override
     public boolean update(Bus bus) {
+        if (bus == null){
+            throw new IllegalArgumentException("bus == null");
+        }
         final Bus founded = getById(bus.getId());
         if (founded != null) {
             BusCopy.copy(bus, founded);
@@ -70,4 +79,17 @@ public class BusRepository implements CrudRepository<Bus>{
             to.setPrice(from.getPrice());
         }
     }
+
+    public boolean updateByPassengers(int passengers, Bus copyFrom) {
+        if (copyFrom == null){
+            throw new IllegalArgumentException("bus == null");
+        }
+        for (Bus bus : buses) {
+            if (bus.getPassengers() == passengers) {
+                BusRepository.BusCopy.copy(copyFrom, bus);
+            }
+        }
+        return true;
+    }
+
 }
