@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TruckRepositoryTest {
 
@@ -28,33 +31,33 @@ class TruckRepositoryTest {
     }
 
     @Test
-    void getById_findOne() {
-        final Truck actual = target.getById(truck.getId());
+    void findById_findOne() {
+        final Optional<Truck> actual = target.findById(truck.getId());
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(truck.getId(), actual.getId());
+        assertEquals(truck.getId(), actual.get().getId());
     }
 
     @Test
-    void getById_notFind() {
-        final Truck actual = target.getById("1111");
-        Assertions.assertNull(actual);
+    void findById_notFind() {
+        final Optional<Truck> actual = target.findById("1111");
+        Assertions.assertTrue(actual.isEmpty());
     }
 
     @Test
-    void getById_findOne_manyTrucks() {
+    void findById_findOne_manyTrucks() {
         final Truck otherTruck = createSimpleTruck();
         target.save(otherTruck);
-        final Truck actual = target.getById(truck.getId());
+        final Optional<Truck> actual = target.findById(truck.getId());
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(truck.getId(), actual.getId());
-        Assertions.assertNotEquals(otherTruck.getId(), actual.getId());
+        assertEquals(truck.getId(), actual.get().getId());
+        Assertions.assertNotEquals(otherTruck.getId(), actual.get().getId());
     }
 
     @Test
     void getAll() {
         final List<Truck> actual = target.getAll();
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(1, actual.size());
+        assertEquals(1, actual.size());
     }
 
     @Test
@@ -62,15 +65,27 @@ class TruckRepositoryTest {
         truck.setPrice(BigDecimal.ONE);
         final boolean actual = target.save(truck);
         Assertions.assertTrue(actual);
-        final Truck actualTruck = target.getById(truck.getId());
-        Assertions.assertEquals(BigDecimal.ONE, actualTruck.getPrice());
+        final Optional<Truck> actualTruck = target.findById(truck.getId());
+        assertEquals(BigDecimal.ONE, actualTruck.get().getPrice());
+    }
+
+    @Test
+    void save_success() {
+        boolean result = target.save(truck);
+        Assertions.assertTrue(result);
+        final Optional<Truck> actual = target.findById(truck.getId());
+        assertEquals(truck.getId(), actual.get().getId());
+        assertEquals(truck.getPrice(), actual.get().getPrice());
+        assertEquals(truck.getManufacturer(), actual.get().getManufacturer());
+        assertEquals(truck.getModel(), actual.get().getModel());
+        assertEquals(truck.getCarryingCapacity(), actual.get().getCarryingCapacity());
     }
 
     @Test
     void save_fail() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> target.save(null));
+        boolean result = target.save(null);
+        Assertions.assertFalse(result);
     }
-
 
     @Test
     void saveAll_null() {
@@ -98,12 +113,17 @@ class TruckRepositoryTest {
     }
 
     @Test
+    void update_truck_null() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> target.update(null));
+    }
+
+    @Test
     void update() {
         truck.setPrice(BigDecimal.TEN);
         final boolean actual = target.update(truck);
         Assertions.assertTrue(actual);
-        final Truck actualTruck = target.getById(truck.getId());
-        Assertions.assertEquals(BigDecimal.TEN, actualTruck.getPrice());
+        final Optional<Truck> actualTruck = target.findById(truck.getId());
+        assertEquals(BigDecimal.TEN, actualTruck.get().getPrice());
     }
 
     @Test
@@ -113,9 +133,22 @@ class TruckRepositoryTest {
         otherTruck.setPrice(BigDecimal.TEN);
         final boolean actual = target.updateByCarryingCapacity(truck.getCarryingCapacity(), otherTruck);
         Assertions.assertTrue(actual);
-        final Truck actualTruck = target.getById(truck.getId());
-        Assertions.assertEquals(Manufacturer.KIA, actualTruck.getManufacturer());
-        Assertions.assertEquals(BigDecimal.TEN, actualTruck.getPrice());
+        final Optional<Truck> actualTruck = target.findById(truck.getId());
+        assertEquals(Manufacturer.KIA, actualTruck.get().getManufacturer());
+        assertEquals(BigDecimal.TEN, actualTruck.get().getPrice());
     }
 
- }
+    @Test
+    void updateByCarryingCapacityNothingToUpdate() {
+        final Truck otherTruck = createSimpleTruck();
+        otherTruck.setManufacturer(Manufacturer.RENAULT);
+        otherTruck.setPrice(BigDecimal.TEN);
+        Manufacturer manufacturer = truck.getManufacturer();
+        BigDecimal price = truck.getPrice();
+        final boolean actual = target.updateByCarryingCapacity(truck.getCarryingCapacity() + 1, otherTruck);
+        Assertions.assertTrue(actual);
+        final Optional<Truck> actualTruck = target.findById(truck.getId());
+        assertEquals(manufacturer, actualTruck.get().getManufacturer());
+        assertEquals(price, actualTruck.get().getPrice());
+    }
+}

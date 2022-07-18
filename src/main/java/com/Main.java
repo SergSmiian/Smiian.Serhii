@@ -20,11 +20,12 @@ public class Main {
     public static void main(String[] args) {
         final List<Auto> autos = AUTO_SERVICE.createAndSaveAutos(3);
         AUTO_SERVICE.printAll();
-        // TODO: 03/07/22 add test
         Auto auto = autos.get(1);
         auto.setModel("UUUU0000");
         AUTO_SERVICE.updateAuto(auto);
         AUTO_SERVICE.printAll();
+
+        AUTO_SERVICE.optionalExmaples();
 
         final List<Bus> buses = BUS_SERVICE.createAndSaveBuses(3);
         BUS_SERVICE.printAll();

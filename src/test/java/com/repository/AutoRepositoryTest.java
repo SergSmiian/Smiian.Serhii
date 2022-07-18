@@ -7,8 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
 
 class AutoRepositoryTest {
 
@@ -28,26 +28,26 @@ class AutoRepositoryTest {
     }
 
     @Test
-    void getById_findOne() {
-        final Auto actual = target.getById(auto.getId());
-        Assertions.assertNotNull(actual);
-        Assertions.assertEquals(auto.getId(), actual.getId());
+    void findById_findOne() {
+        final Optional<Auto> actual = target.findById(auto.getId());
+        Assertions.assertTrue(actual.isPresent());
+        Assertions.assertEquals(auto.getId(), actual.get().getId());
     }
 
     @Test
-    void getById_notFind() {
-        final Auto actual = target.getById("1232");
-        Assertions.assertNull(actual);
+    void findById_notFind() {
+        final Optional<Auto> actual = target.findById("1232");
+        Assertions.assertFalse(actual.isPresent());
     }
 
     @Test
-    void getById_findOne_manyAutos() {
+    void findById_findOne_manyAutos() {
         final Auto otherAuto = createSimpleAuto();
         target.save(otherAuto);
-        final Auto actual = target.getById(auto.getId());
-        Assertions.assertNotNull(actual);
-        Assertions.assertEquals(auto.getId(), actual.getId());
-        Assertions.assertNotEquals(otherAuto.getId(), actual.getId());
+        final Optional<Auto> actual = target.findById(auto.getId());
+        Assertions.assertTrue(actual.isPresent());
+        Assertions.assertEquals(auto.getId(), actual.get().getId());
+        Assertions.assertNotEquals(otherAuto.getId(), actual.get().getId());
     }
 
     @Test
@@ -62,8 +62,9 @@ class AutoRepositoryTest {
         auto.setPrice(BigDecimal.ONE);
         final boolean actual = target.save(auto);
         Assertions.assertTrue(actual);
-        final Auto actualAuto = target.getById(auto.getId());
-        Assertions.assertEquals(BigDecimal.ONE, actualAuto.getPrice());
+        final Optional<Auto> actualAuto = target.findById(auto.getId());
+        Assertions.assertTrue(actualAuto.isPresent());
+        Assertions.assertEquals(BigDecimal.ONE, actualAuto.get().getPrice());
     }
 
     @Test
@@ -74,8 +75,9 @@ class AutoRepositoryTest {
     @Test
     void save_success_changePrice() {
         target.save(auto);
-        final Auto actual = target.getById(auto.getId());
-        Assertions.assertEquals(BigDecimal.valueOf(-1), actual.getPrice());
+        final Optional<Auto> actual = target.findById(auto.getId());
+        Assertions.assertTrue(actual.isPresent());
+        Assertions.assertEquals(BigDecimal.valueOf(-1), actual.get().getPrice());
     }
 
     @Test
@@ -108,8 +110,9 @@ class AutoRepositoryTest {
         auto.setPrice(BigDecimal.TEN);
         final boolean actual = target.update(auto);
         Assertions.assertTrue(actual);
-        final Auto actualAuto = target.getById(auto.getId());
-        Assertions.assertEquals(BigDecimal.TEN, actualAuto.getPrice());
+        final Optional<Auto> actualAuto = target.findById(auto.getId());
+        Assertions.assertTrue(actualAuto.isPresent());
+        Assertions.assertEquals(BigDecimal.TEN, actualAuto.get().getPrice());
     }
 
     @Test
@@ -120,15 +123,15 @@ class AutoRepositoryTest {
 
         final boolean actual = target.updateByBodyType(auto.getBodyType(), otherAuto);
         Assertions.assertTrue(actual);
-        final Auto actualAuto = target.getById(auto.getId());
-        Assertions.assertEquals(Manufacturer.RENAULT, actualAuto.getManufacturer());
-        Assertions.assertEquals(BigDecimal.TEN, actualAuto.getPrice());
+        final Optional<Auto> actualAuto = target.findById(auto.getId());
+        Assertions.assertTrue(actualAuto.isPresent());
+        Assertions.assertEquals(Manufacturer.BMW, actualAuto.get().getManufacturer());
+        Assertions.assertEquals(BigDecimal.TEN, actualAuto.get().getPrice());
     }
 
     @Test
     void delete() {
         boolean result = target.delete(auto.getId());
-
         Assertions.assertTrue(result);
     }
 

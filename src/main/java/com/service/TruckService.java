@@ -7,9 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class TruckService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TruckService.class);
@@ -20,9 +18,11 @@ public class TruckService {
         this.truckRepository = truckRepository;
     }
 
-    public List<Truck> createAndSaveTrucks(int count) {
+    public List<Truck> createAndSaveTrucks(Integer count) {
+        Optional<Integer> size
+                = Optional.ofNullable(count).or(() -> Optional.of(5));
         List<Truck> result = new LinkedList<>();
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < size.get(); i++) {
             final Truck truck = new Truck(
                     "Model-" + RANDOM.nextInt(1000),
                     getRandomManufacturer(),
@@ -37,11 +37,15 @@ public class TruckService {
     }
 
     public void updateTruck(Truck truck) {
+        Optional.ofNullable(truck).orElseThrow(() ->
+                new IllegalArgumentException("truck = NULL"));
         LOGGER.info("updated truck: {}", truck.getId());
         truckRepository.update(truck);
     }
 
     public void deleteTruck(Truck truck) {
+        Optional.ofNullable(truck).orElseThrow(() ->
+                new IllegalArgumentException("truck = NULL"));
         LOGGER.info("deleted truck: {}", truck.getId());
         truckRepository.delete(truck.getId());
     }
@@ -52,23 +56,32 @@ public class TruckService {
         return values[index];
     }
 
-    public void saveTruck(List<Truck> trucks) {
+    public void saveTrucks(List<Truck> trucks) {
+        trucks = Optional.ofNullable(trucks).orElseGet(this::getEmptyTruckList);
         LOGGER.info("create {} trucks", trucks.size());
         truckRepository.saveAll(trucks);
     }
 
+    public void updateTrucks(List<Truck> trucks) {
+        trucks = Optional.ofNullable(trucks).orElse(getEmptyTruckList());
+        LOGGER.info("update {} trucks", trucks.size());
+        for (Truck truck : trucks){
+            truckRepository.update(truck);
+        }
+    }
+    private List<Truck> getEmptyTruckList(){
+        LOGGER.info("Empty list was born");
+        return List.of();
+    }
     public void printAll() {
         for (Truck truck : truckRepository.getAll()) {
             System.out.println(truck);
         }
-        System.out.println("- - - -");
+        System.out.println("-".repeat(5));
     }
 
-    public Truck findOneById(String id) {
-        if (id == null) {
-            return truckRepository.getById("");
-        } else {
-            return truckRepository.getById(id);
-        }
+    public Optional<Truck> findOneById(String id) {
+        id = Optional.ofNullable(id).orElse("");
+        return truckRepository.findById(id);
     }
 }

@@ -5,6 +5,7 @@ import com.model.Bus;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 public class BusRepository implements CrudRepository<Bus> {
     private final List<Bus> buses;
@@ -14,13 +15,13 @@ public class BusRepository implements CrudRepository<Bus> {
     }
 
     @Override
-    public Bus getById(String id) {
+    public Optional<Bus> findById(String id) {
         for (Bus bus : buses) {
             if (bus.getId().equals(id)) {
-                return bus;
+                return Optional.of(bus);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
@@ -30,16 +31,15 @@ public class BusRepository implements CrudRepository<Bus> {
 
     @Override
     public boolean save(Bus bus) {
-        if (bus == null){
-            throw new IllegalArgumentException("bus == null");
-        }
+        bus = Optional.ofNullable(bus).orElseThrow(() ->
+                new IllegalArgumentException("bus = NULL"));
         buses.add(bus);
         return true;
     }
 
     @Override
     public boolean saveAll(List<Bus> bus) {
-        if (bus == null){
+        if (bus == null || bus.isEmpty()) {
             return false;
         }
         return buses.addAll(bus);
@@ -47,12 +47,11 @@ public class BusRepository implements CrudRepository<Bus> {
 
     @Override
     public boolean update(Bus bus) {
-        if (bus == null){
-            throw new IllegalArgumentException("bus == null");
-        }
-        final Bus founded = getById(bus.getId());
-        if (founded != null) {
-            BusCopy.copy(bus, founded);
+        Optional.ofNullable(bus).orElseThrow(() ->
+                new IllegalArgumentException("bus = NULL"));
+        final Optional<Bus> optionalBus = findById(bus.getId());
+        if (optionalBus.isPresent()) {
+            optionalBus.ifPresent(founded -> BusRepository.BusCopy.copy(bus, founded));
             return true;
         }
         return false;
@@ -81,9 +80,8 @@ public class BusRepository implements CrudRepository<Bus> {
     }
 
     public boolean updateByPassengers(int passengers, Bus copyFrom) {
-        if (copyFrom == null){
-            throw new IllegalArgumentException("bus == null");
-        }
+        Optional.ofNullable(copyFrom).orElseThrow(() ->
+                new IllegalArgumentException("bus = NULL"));
         for (Bus bus : buses) {
             if (bus.getPassengers() == passengers) {
                 BusRepository.BusCopy.copy(copyFrom, bus);

@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 class TruckServiceTest {
 
@@ -34,6 +35,11 @@ class TruckServiceTest {
         final List<Truck> actual = target.createAndSaveTrucks(0);
         Assertions.assertEquals(0, actual.size());
     }
+    @Test
+    void createTrucks_nullCount() {
+        final List<Truck> actual = target.createAndSaveTrucks(null);
+        Assertions.assertEquals(5, actual.size());
+    }
 
     @Test
     void createTrucks() {
@@ -46,10 +52,24 @@ class TruckServiceTest {
     @Test
     void saveTrucks() {
         List<Truck> truck = List.of(createSimpleTruck(), createSimpleTruck());
-        target.saveTruck(truck);
+        target.saveTrucks(truck);
         Mockito.verify(truckRepository).saveAll(Mockito.any());
     }
-
+    @Test
+    void saveTrucksNull() {
+        target.saveTrucks(null);
+        Mockito.verify(truckRepository).saveAll(Mockito.any());
+    }
+    @Test
+    void updateTrucks() {
+        List<Truck> truck = List.of(createSimpleTruck(), createSimpleTruck(), createSimpleTruck());
+        target.updateTrucks(truck);
+        Mockito.verify(truckRepository, Mockito.times(truck.size())).update(Mockito.any());
+    }
+    @Test
+    void updateTrucksNull() {
+        target.saveTrucks(null);
+    }
     @Test
     void printAll() {
         List<Truck> autos = List.of(createSimpleTruck(), createSimpleTruck());
@@ -64,16 +84,27 @@ class TruckServiceTest {
     @Test
     void findOneById_null1() {
         final Truck expected = createSimpleTruck();
-        Mockito.when(truckRepository.getById("")).thenReturn(expected);
-        final Truck actual = target.findOneById(null);
-        Assertions.assertEquals(expected.getId(), actual.getId());
+        Mockito.when(truckRepository.findById("")).thenReturn(Optional.of(expected));
+
+        final Optional<Truck> actual = target.findOneById(null);
+
+        Assertions.assertTrue(actual.isPresent());
+        Assertions.assertEquals(expected.getId(), actual.get().getId());
     }
 
     @Test
     void findOneById_null2() {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         target.findOneById(null);
-        Mockito.verify(truckRepository).getById(captor.capture());
+        Mockito.verify(truckRepository).findById(captor.capture());
         Assertions.assertEquals("", captor.getValue());
+    }
+    @Test
+    void findOneById() {
+        String expectedId = "555";
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        target.findOneById(expectedId);
+        Mockito.verify(truckRepository).findById(captor.capture());
+        Assertions.assertEquals(expectedId, captor.getValue());
     }
 }
