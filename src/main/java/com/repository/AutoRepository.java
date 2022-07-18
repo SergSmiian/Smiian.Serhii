@@ -87,6 +87,7 @@ public class AutoRepository implements CrudRepository<Auto> {
             to.setModel(from.getModel());
             to.setBodyType(from.getBodyType());
             to.setPrice(from.getPrice());
+            to.setManufacturer(from.getManufacturer());
         }
     }
 }

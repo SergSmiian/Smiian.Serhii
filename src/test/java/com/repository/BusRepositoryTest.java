@@ -72,13 +72,6 @@ class BusRepositoryTest {
     }
 
     @Test
-    void save_success_changePrice() {
-        target.save(bus);
-        final Optional<Bus> actual = target.findById(bus.getId());
-        Assertions.assertEquals(BigDecimal.TEN, actual.get().getPrice());
-    }
-
-    @Test
     void saveAll_null() {
         final boolean actual = target.saveAll(null);
         Assertions.assertFalse(actual);

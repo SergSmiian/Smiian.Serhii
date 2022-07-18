@@ -83,6 +83,9 @@ public class TruckRepository implements CrudRepository<Truck> {
         }
     }
     public boolean updateByCarryingCapacity (double carryingCapacity, Truck copyFrom){
+        if (copyFrom == null){
+            throw new IllegalArgumentException("copyFrom == null");
+        }
         for (Truck truck : trucks) {
             Optional <Truck> truckOptional = Optional.of(truck);
             truckOptional.map(Truck::getCarryingCapacity)
