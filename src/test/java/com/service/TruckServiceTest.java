@@ -26,24 +26,19 @@ class TruckServiceTest {
 
     @Test
     void createTrucks_negativeCount() {
-        final List<Truck> actual = target.createAndSaveTrucks(-1);
+        final List<Truck> actual = target.createAndSave(-1);
         Assertions.assertEquals(0, actual.size());
     }
 
     @Test
     void createTrucks_zeroCount() {
-        final List<Truck> actual = target.createAndSaveTrucks(0);
+        final List<Truck> actual = target.createAndSave(0);
         Assertions.assertEquals(0, actual.size());
-    }
-    @Test
-    void createTrucks_nullCount() {
-        final List<Truck> actual = target.createAndSaveTrucks(null);
-        Assertions.assertEquals(5, actual.size());
     }
 
     @Test
     void createTrucks() {
-        final List<Truck> actual = target.createAndSaveTrucks(5);
+        final List<Truck> actual = target.createAndSave(5);
         Assertions.assertEquals(5, actual.size());
         Mockito.verify(truckRepository, Mockito.times(5))
                 .save(Mockito.any());
@@ -52,7 +47,7 @@ class TruckServiceTest {
     @Test
     void saveTrucks() {
         List<Truck> truck = List.of(createSimpleTruck(), createSimpleTruck());
-        target.saveTrucks(truck);
+        target.saveVehicle(truck);
         Mockito.verify(truckRepository).saveAll(Mockito.any());
     }
     @Test
@@ -68,13 +63,14 @@ class TruckServiceTest {
     }
     @Test
     void updateTrucksNull() {
-        target.saveTrucks(null);
+        target.updateTrucks(null);
+        Mockito.verify(truckRepository,Mockito.times(0)).update(Mockito.any());
     }
     @Test
     void printAll() {
         List<Truck> autos = List.of(createSimpleTruck(), createSimpleTruck());
         Mockito.when(truckRepository.getAll()).thenReturn(autos);
-        target.printAll();
+        target.printAllVehicle();
     }
 
     private Truck createSimpleTruck() {

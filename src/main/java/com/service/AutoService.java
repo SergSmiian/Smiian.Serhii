@@ -1,75 +1,40 @@
 package com.service;
 
 import com.model.Auto;
-import com.model.Manufacturer;
 import com.repository.AutoRepository;
+import com.repository.CrudRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Optional;
 
-public class AutoService {
+public class AutoService extends VehicleService<Auto> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoService.class);
-    private static final Random RANDOM = new Random();
     private final AutoRepository autoRepository;
 
     public AutoService(AutoRepository autoRepository) {
         this.autoRepository = autoRepository;
     }
 
-    public List<Auto> createAndSaveAutos(int count) {
-        List<Auto> result = new LinkedList<>();
-        for (int i = 0; i < count; i++) {
-            final Auto auto = new Auto(
-                    "Model-" + RANDOM.nextInt(1000),
-                    getRandomManufacturer(),
-                    BigDecimal.valueOf(RANDOM.nextDouble(1000.0)),
-                    "Model-" + RANDOM.nextInt(1000)
-            );
-            result.add(auto);
-            autoRepository.save(auto);
-            LOGGER.debug("Created auto {}", auto.getId());
-        }
-        return result;
+    @Override
+    CrudRepository<Auto> getRepository() {
+        return autoRepository;
     }
 
-    public void updateAuto(Auto auto) {
-        LOGGER.info("updated auto {}", auto.getId());
-        autoRepository.update(auto);
+    @Override
+    Auto createVehicle() {
+        return new Auto(
+                "Model-" + getRandom().nextInt(1000),
+                getRandomManufacturer(),
+                BigDecimal.valueOf(getRandom().nextDouble(1000.0)),
+                "Model-" + getRandom().nextInt(1000)
+        );
     }
 
-    public void deleteAuto(Auto auto) {
-        LOGGER.info("deleted auto: {}", auto.getId());
-        autoRepository.delete(auto.getId());
-    }
-
-    private Manufacturer getRandomManufacturer() {
-        final Manufacturer[] values = Manufacturer.values();
-        final int index = RANDOM.nextInt(values.length);
-        return values[index];
-    }
-
-    public void saveAutos(List<Auto> autos) {
-        LOGGER.info("create {} autos", autos.size());
-        autoRepository.saveAll(autos);
-    }
-
-    public void printAll() {
-        for (Auto auto : autoRepository.getAll()) {
-            System.out.println(auto);
-        }
-        System.out.println("- - - -");
-    }
-
-    public Optional<Auto> findOneById(String id) {
-        id = Optional.ofNullable(id).orElse("");
-        return autoRepository.findById(id);
-    }
-
-    public void optionalExmaples() {
-        final Auto auto = createAndSaveAutos(1).get(0);
+    public void optionalExamples() {
+        final Auto auto = createAndSave(1).get(0);
         final String id = auto.getId();
 
 //        simpleCheck(id);
@@ -216,8 +181,10 @@ public class AutoService {
         return new Auto(
                 "Model new",
                 getRandomManufacturer(),
-                BigDecimal.valueOf(RANDOM.nextDouble(1000.0)),
-                "Model-" + RANDOM.nextInt(1000)
+                BigDecimal.valueOf(getRandom().nextDouble(1000.0)),
+                "Model-" + getRandom().nextInt(1000)
         );
     }
+
+
 }
