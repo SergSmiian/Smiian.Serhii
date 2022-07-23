@@ -1,6 +1,6 @@
 package com.service;
 
-import com.model.Truck;
+import com.model.vehicle.Truck;
 import com.repository.CrudRepository;
 import com.repository.TruckRepository;
 import org.slf4j.Logger;

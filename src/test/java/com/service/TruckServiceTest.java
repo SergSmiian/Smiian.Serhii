@@ -1,7 +1,7 @@
 package com.service;
 
-import com.model.Manufacturer;
-import com.model.Truck;
+import com.model.vehicle.Manufacturer;
+import com.model.vehicle.Truck;
 import com.repository.TruckRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

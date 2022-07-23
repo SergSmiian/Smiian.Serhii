@@ -1,7 +1,7 @@
 package com.service;
 
-import com.model.Manufacturer;
-import com.model.Vehicle;
+import com.model.vehicle.Manufacturer;
+import com.model.vehicle.Vehicle;
 import com.repository.CrudRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ public abstract class VehicleService<T extends Vehicle> {
             final T vehicle = createVehicle();
             result.add(vehicle);
             getRepository().save(vehicle);
-            LOGGER.debug("Created vehicle {}", vehicle.getId());
+            //LOGGER.debug("Created vehicle {}", vehicle.getId());
         }
         return result;
     }

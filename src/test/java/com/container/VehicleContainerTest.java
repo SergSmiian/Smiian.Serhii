@@ -1,10 +1,10 @@
 package com.container;
 
 
-import com.model.Auto;
-import com.model.Bus;
-import com.model.Manufacturer;
-import com.model.Truck;
+import com.model.vehicle.Auto;
+import com.model.vehicle.Bus;
+import com.model.vehicle.Manufacturer;
+import com.model.vehicle.Truck;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

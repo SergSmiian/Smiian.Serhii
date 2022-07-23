@@ -1,6 +1,6 @@
 package com.repository;
 
-import com.model.Truck;
+import com.model.vehicle.Truck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
