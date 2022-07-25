@@ -1,6 +1,6 @@
 package com.repository;
 
-import com.model.Bus;
+import com.model.vehicle.Bus;
 
 import java.util.Iterator;
 import java.util.LinkedList;

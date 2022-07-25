@@ -1,6 +1,6 @@
 package com.service;
 
-import com.model.Auto;
+import com.model.vehicle.Auto;
 import com.repository.AutoRepository;
 import com.repository.CrudRepository;
 import org.slf4j.Logger;

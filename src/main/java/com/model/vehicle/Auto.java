@@ -1,4 +1,4 @@
-package com.model;
+package com.model.vehicle;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,17 +7,18 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class Bus extends Vehicle {
-    private int passengers;
+public class Auto extends Vehicle {
+    private String bodyType;
 
-    public Bus(String model, Manufacturer manufacturer, BigDecimal price, int passengers) {
+    public Auto(String model, Manufacturer manufacturer, BigDecimal price, String bodyType) {
         super(model, manufacturer, price);
-        this.passengers = passengers;
+        this.bodyType = bodyType;
     }
+
     @Override
     public String toString() {
-        return "Bus{" +
-                "Passengers='" + passengers + '\'' +
+        return "Auto{" +
+                "bodyType='" + bodyType + '\'' +
                 ", id='" + id + '\'' +
                 ", model='" + model + '\'' +
                 ", price=" + price +
