@@ -3,10 +3,9 @@ package com.service;
 import com.model.vehicle.Auto;
 import com.model.vehicle.Manufacturer;
 import com.repository.AutoRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
@@ -15,15 +14,25 @@ import java.util.Optional;
 
 class AutoServiceTest {
 
-    private AutoService target;
-    private AutoRepository autoRepository;
-
-    @BeforeEach
-    void setUp() {
+    private static AutoService target;
+    private static AutoRepository autoRepository;
+    private static MockedStatic<AutoRepository> mockedSettings;
+    @BeforeAll
+    static void setUp() {
         autoRepository = Mockito.mock(AutoRepository.class);
-        target = new AutoService(autoRepository);
+        mockedSettings =
+                Mockito.mockStatic(AutoRepository.class);
+        mockedSettings.when(() -> AutoRepository.getInstance()).thenReturn(autoRepository);
+        target = AutoService.getInstance();
     }
-
+    @AfterAll
+    static void close() {
+        mockedSettings.close();
+    }
+    @AfterEach
+    void reset(){
+        Mockito.reset(autoRepository);
+    }
     @Test
     void createAutos_negativeCount() {
         final List<Auto> actual = target.createAndSave(-1);
@@ -47,11 +56,11 @@ class AutoServiceTest {
     @Test
     void saveAutos() {
         List<Auto> autos = List.of(createSimpleAuto(), createSimpleAuto());
-        target.saveVehicle(autos);
+        target.saveVehicles(autos);
         Mockito.verify(autoRepository).saveAll(Mockito.any());
     }
 
-    @Test
+  @Test
     void printAll() {
         List<Auto> autos = List.of(createSimpleAuto(), createSimpleAuto());
         Mockito.when(autoRepository.getAll()).thenReturn(autos);

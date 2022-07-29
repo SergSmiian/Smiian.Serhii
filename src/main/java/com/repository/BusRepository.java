@@ -9,9 +9,17 @@ import java.util.Optional;
 
 public class BusRepository implements CrudRepository<Bus> {
     private final List<Bus> buses;
+    private static BusRepository instance;
 
-    public BusRepository() {
+    private BusRepository() {
         buses = new LinkedList<>();
+    }
+
+    public static BusRepository getInstance() {
+        if (instance == null) {
+            instance = new BusRepository();
+        }
+        return instance;
     }
 
     @Override
@@ -31,8 +39,7 @@ public class BusRepository implements CrudRepository<Bus> {
 
     @Override
     public boolean save(Bus bus) {
-        bus = Optional.ofNullable(bus).orElseThrow(() ->
-                new IllegalArgumentException("bus = NULL"));
+        bus = Optional.ofNullable(bus).orElseThrow(() -> new IllegalArgumentException("bus = NULL"));
         buses.add(bus);
         return true;
     }
@@ -47,8 +54,7 @@ public class BusRepository implements CrudRepository<Bus> {
 
     @Override
     public boolean update(Bus bus) {
-        Optional.ofNullable(bus).orElseThrow(() ->
-                new IllegalArgumentException("bus = NULL"));
+        Optional.ofNullable(bus).orElseThrow(() -> new IllegalArgumentException("bus = NULL"));
         final Optional<Bus> optionalBus = findById(bus.getId());
         if (optionalBus.isPresent()) {
             optionalBus.ifPresent(founded -> BusRepository.BusCopy.copy(bus, founded));
@@ -80,8 +86,7 @@ public class BusRepository implements CrudRepository<Bus> {
     }
 
     public boolean updateByPassengers(int passengers, Bus copyFrom) {
-        Optional.ofNullable(copyFrom).orElseThrow(() ->
-                new IllegalArgumentException("bus = NULL"));
+        Optional.ofNullable(copyFrom).orElseThrow(() -> new IllegalArgumentException("bus = NULL"));
         for (Bus bus : buses) {
             if (bus.getPassengers() == passengers) {
                 BusRepository.BusCopy.copy(copyFrom, bus);

@@ -11,7 +11,7 @@ public class Truck extends Vehicle {
     private Double carryingCapacity;
 
     public Truck(String model, Manufacturer manufacturer, BigDecimal price, Double carryingCapacity) {
-        super(model, manufacturer, price);
+        super(model, manufacturer, price, VehicleType.TRUCK);
         this.carryingCapacity = carryingCapacity;
     }
 
