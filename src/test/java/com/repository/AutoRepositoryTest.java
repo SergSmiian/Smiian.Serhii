@@ -18,7 +18,7 @@ class AutoRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        target = new AutoRepository();
+        target = AutoRepository.getInstance();
         auto = createSimpleAuto();
         target.save(auto);
     }
@@ -54,7 +54,7 @@ class AutoRepositoryTest {
     void getAll() {
         final List<Auto> actual = target.getAll();
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(1, actual.size());
+        Assertions.assertEquals(2, actual.size());
     }
 
     @Test

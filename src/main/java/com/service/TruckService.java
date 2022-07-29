@@ -7,24 +7,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 public class TruckService extends VehicleService<Truck> {
     private static final Logger LOGGER = LoggerFactory.getLogger(TruckService.class);
-    private final TruckRepository truckRepository;
-    public TruckService(TruckRepository truckRepository) {
-        this.truckRepository = truckRepository;
+    private final TruckRepository truckRepository = TruckRepository.getInstance();
+    private static TruckService instance;
+
+    public static TruckService getInstance() {
+        if (instance == null) {
+            instance = new TruckService();
+        }
+        return instance;
     }
     @Override
     CrudRepository<Truck> getRepository() {
         return truckRepository;
     }
     @Override
-    Truck createVehicle() {
+    public Truck createVehicle() {
         return new Truck(
                 "Model-" + getRandom().nextInt(1000),
                 getRandomManufacturer(),
-                BigDecimal.valueOf(getRandom().nextDouble(1000.0)),
+                BigDecimal.valueOf(getRandom().nextDouble(1000.0)).setScale(2, RoundingMode.HALF_UP),
                 getRandom().nextDouble(1000));
     }
     private List<Truck> getEmptyTruckList(){

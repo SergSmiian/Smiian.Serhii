@@ -7,28 +7,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Optional;
 
 public class AutoService extends VehicleService<Auto> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoService.class);
-    private final AutoRepository autoRepository;
 
-    public AutoService(AutoRepository autoRepository) {
-        this.autoRepository = autoRepository;
+    private final AutoRepository autoRepository = AutoRepository.getInstance();
+    private static AutoService instance;
+
+    public static AutoService getInstance() {
+        if (instance == null) {
+            instance = new AutoService();
+        }
+        return instance;
     }
-
     @Override
     CrudRepository<Auto> getRepository() {
         return autoRepository;
     }
 
     @Override
-    Auto createVehicle() {
+    public Auto createVehicle() {
         return new Auto(
                 "Model-" + getRandom().nextInt(1000),
                 getRandomManufacturer(),
-                BigDecimal.valueOf(getRandom().nextDouble(1000.0)),
+                BigDecimal.valueOf(getRandom().nextDouble(1000.0)).setScale(2, RoundingMode.HALF_UP),
                 "Model-" + getRandom().nextInt(1000)
         );
     }
@@ -176,7 +181,7 @@ public class AutoService extends VehicleService<Auto> {
                 }
         );
     }
-
+/*
     private Auto createOne() {
         return new Auto(
                 "Model new",
@@ -185,6 +190,6 @@ public class AutoService extends VehicleService<Auto> {
                 "Model-" + getRandom().nextInt(1000)
         );
     }
-
+*/
 
 }

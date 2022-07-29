@@ -12,7 +12,7 @@ public class Bus extends Vehicle {
     private int passengers;
 
     public Bus(String model, Manufacturer manufacturer, BigDecimal price, int passengers) {
-        super(model, manufacturer, price);
+        super(model, manufacturer, price, VehicleType.BUS);
         this.passengers = passengers;
     }
     @Override

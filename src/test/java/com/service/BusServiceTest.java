@@ -2,11 +2,11 @@ package com.service;
 
 import com.model.vehicle.Bus;
 import com.model.vehicle.Manufacturer;
+import com.repository.AutoRepository;
 import com.repository.BusRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
@@ -15,13 +15,25 @@ import java.util.Optional;
 
 class BusServiceTest {
 
-    private BusService target;
-    private BusRepository busRepository;
+    static private BusService target;
+    static private BusRepository busRepository;
+    private static MockedStatic<BusRepository> mockedSettings;
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    static void setUp() {
         busRepository = Mockito.mock(BusRepository.class);
-        target = new BusService(busRepository);
+        mockedSettings =
+                Mockito.mockStatic(BusRepository.class);
+        mockedSettings.when(() -> BusRepository.getInstance()).thenReturn(busRepository);
+        target = BusService.getInstance();
+    }
+    @AfterAll
+    static void close() {
+        mockedSettings.close();
+    }
+    @AfterEach
+    void reset(){
+        Mockito.reset(busRepository);
     }
     @Test
     void createBuses_negativeCount() {
@@ -44,7 +56,7 @@ class BusServiceTest {
     @Test
     void saveBuses() {
         List<Bus> buses = List.of(createSimpleBus(), createSimpleBus());
-        target.saveVehicle(buses);
+        target.saveVehicles(buses);
         Mockito.verify(busRepository).saveAll(Mockito.any());
     }
 
@@ -72,6 +84,7 @@ class BusServiceTest {
         target.findOneById(null);
         Mockito.verify(busRepository).findById(captor.capture());
         Assertions.assertEquals("", captor.getValue());
+
     }
 
     @Test

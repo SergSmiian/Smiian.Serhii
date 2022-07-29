@@ -11,8 +11,17 @@ public class TruckRepository implements CrudRepository<Truck> {
     private final List<Truck> trucks;
     private static final Logger LOGGER = LoggerFactory.getLogger(TruckRepository.class);
 
-    public TruckRepository() {
+    private static TruckRepository instance;
+
+    private TruckRepository() {
         trucks = new LinkedList<>();
+    }
+
+    public static TruckRepository getInstance() {
+        if (instance == null) {
+            instance = new TruckRepository();
+        }
+        return instance;
     }
 
     @Override

@@ -18,7 +18,7 @@ class BusRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        target = new BusRepository();
+        target = BusRepository.getInstance();
         bus = createSimpleBus();
         target.save(bus);
     }

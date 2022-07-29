@@ -8,11 +8,11 @@ public interface CrudRepository<T> {
 
     List<T> getAll();
 
-    boolean save(T auto);
+    boolean save(T vehicle);
 
-    boolean saveAll(List<T> auto);
+    boolean saveAll(List<T> vehicle);
 
-    boolean update(T auto);
+    boolean update(T vehicle);
 
     boolean delete(String id);
 }
